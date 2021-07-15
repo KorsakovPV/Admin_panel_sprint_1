@@ -4,15 +4,9 @@ import uuid
 import psycopg2
 from psycopg2.extras import execute_batch
 
+from config import dsl
 
-conn = psycopg2.connect(
-    dbname='movies',
-    user='postgres',
-    host='localhost',
-    port=5432,
-    options='-c search_path=content',
-    password='postgres'
-)
+conn = psycopg2.connect(**dsl)
 
 cur = conn.cursor()
 
