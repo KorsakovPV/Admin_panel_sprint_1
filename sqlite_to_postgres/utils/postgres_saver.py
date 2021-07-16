@@ -5,8 +5,6 @@ from uuid import uuid4
 
 from psycopg2.extensions import connection as _connection
 
-from sqlite_to_postgres.utils.helpers import create_tuple
-
 
 class PostgresSaver:
     def __init__(self, connection: _connection):
@@ -116,71 +114,27 @@ class PostgresSaver:
     def insert_film_work(self):
         with self.conn.cursor() as cursor:
             for row in self.film_work:
-                line = create_tuple(row)
-                cursor.execute(
-                    """INSERT INTO content.film_work (
-                    id,
-                    title,
-                    description,
-                    rating,
-                    created_at,
-                    updated_at
-                ) VALUES (%s, %s, %s, %s, %s, %s)
-                """, line
-                )
+                cursor.execute('INSERT INTO content.film_work ( id, title, description, rating, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)', (row.get('id'), row.get('title'), row.get('description'), row.get('imdb_rating'), row.get('created_at').strftime('%Y-%m-%d'), row.get('created_at').strftime('%Y-%m-%d')))
 
     def insert_genre(self):
         with self.conn.cursor() as cursor:
             for row in self.genre:
-                line = tuple(val for val in row.values())
-                cursor.execute(
-                    """INSERT INTO content.genre (
-                    id,
-                    name
-                ) VALUES (%s, %s)
-                """, line
-                )
+                cursor.execute('INSERT INTO content.genre (id, name) VALUES (%s, %s)', (row.get('id'), row.get('name')))
 
     def insert_person(self):
         with self.conn.cursor() as cursor:
             for row in self.person:
-                line = tuple(val for val in row.values())
-                cursor.execute(
-                    """INSERT INTO content.person (
-                    id,
-                    full_name,
-                    birthdate
-                ) VALUES (%s, %s, %s)
-                """, line
-                )
+                cursor.execute('INSERT INTO content.person (id, full_name, birth_date) VALUES (%s, %s, %s)', (row.get('id'), row.get('full_name'), row.get('birthdate')))
 
     def insert_film_work_genre(self):
         with self.conn.cursor() as cursor:
             for row in self.genre_film_work:
-                line = tuple(val for val in row.values())
-                cursor.execute(
-                    """INSERT INTO content.film_work_genre (
-                    id,
-                    film_work_id,
-                    genre_id
-                ) VALUES (%s, %s, %s)
-                """, line
-                )
+                cursor.execute('INSERT INTO content.film_work_genre (id, film_work_id, genre_id) VALUES (%s, %s, %s)', (row.get('id'), row.get('film_work_id'), row.get('genre_id')))
 
     def insert_film_work_person(self):
         with self.conn.cursor() as cursor:
             for row in self.person_film_work:
-                line = tuple(val for val in row.values())
-                cursor.execute(
-                    """INSERT INTO content.film_work_person (
-                    id,
-                    film_work_id,
-                    person_id,
-                    role
-                ) VALUES (%s, %s, %s, %s)
-                ON CONFLICT (film_work_id, person_id, role) DO NOTHING
-                """, line
-                )
+                cursor.execute('INSERT INTO content.film_work_person (id, film_work_id, person_id, role) VALUES (%s, %s, %s, %s) ON CONFLICT (film_work_id, person_id, role) DO NOTHING', (row.get('id'), row.get('film_work_id'), row.get('person_id'), row.get('role'), ))
 
     def save_all_data(self, data: List[dict]):
         for row in data:

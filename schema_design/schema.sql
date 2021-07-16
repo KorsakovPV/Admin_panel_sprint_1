@@ -1,3 +1,4 @@
+DROP SCHEMA IF EXISTS content CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS content;
 
@@ -12,7 +13,7 @@ CREATE TABLE IF NOT EXISTS content.film_work (
     creation_date DATE,
     certificate TEXT,
     file_path TEXT,
-    rating NUMERIC(2,1) CHECK (rating > 0),
+    rating NUMERIC(2,1),
     type content.film_work_types,
     created_at TIMESTAMP with time zone,
     updated_at TIMESTAMP with time zone
