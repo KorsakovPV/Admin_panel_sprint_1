@@ -1,13 +1,9 @@
-import sqlite3
 import json
+import sqlite3
 from typing import List
 
 
 class SQLiteLoader:
-    # при помощи group_concat
-
-
-
     SQL = """
     WITH movies_actors as (
         SELECT movies.id, group_concat(actors.id) as actors_ids, group_concat(actors.name) as actors_names
@@ -36,17 +32,13 @@ class SQLiteLoader:
             d[col[0]] = row[idx]
         return d
 
-    # Загрузка писателей
     def load_writers_names(self) -> dict:
         writers = {}
-        # получаем данные из базы данных и по одной перебираем итератором
         for writer in self.conn.execute('SELECT DISTINCT id, name FROM writers'):
-            # по id собираем в словарик (id у нас uuid)
             writers[writer['id']] = writer
         return writers
 
     def transform_row(self, row: dict, writers: dict) -> dict:
-        # Дорабатываем строку с фильмом добавляем writers
         movie_writers = []
         writers_set = set()
         for writer in json.loads(row['writers']):
@@ -77,14 +69,10 @@ class SQLiteLoader:
     def load_movies(self) -> List[dict]:
         movies = []
 
-        # вызываем функцию которая возвращаем словрь с писателями
         writers = self.load_writers_names()
 
-        # получаем из sqlite.movies фильмы с присоединенными данными.
         for row in self.conn.execute(self.SQL):
-            # заменяем в строке из таблицы writers_id на значение
             transformed_row = self.transform_row(row, writers)
-            # добовляем строку в список фильмов
             movies.append(transformed_row)
 
         return movies

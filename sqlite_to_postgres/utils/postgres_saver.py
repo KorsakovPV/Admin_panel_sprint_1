@@ -21,8 +21,8 @@ class PostgresSaver:
         self.schema = 'content'
 
     def append_film_work(self, row: Dict[str, Any]) -> str:
-        film_id = str(uuid4())# создаем uuid
-        new_row = {#Берем все значения необходимые для создания строки в базе
+        film_id = str(uuid4())
+        new_row = {
             'id': film_id,
             'title': row['title'],
             'description': '' if row['description'] is None else row['description'],
@@ -30,7 +30,7 @@ class PostgresSaver:
             'created_at': datetime.now().astimezone(),
             'modified_at': datetime.now().astimezone()
         }
-        # добавляет new_row в переменную класса
+
         self.film_work.append(new_row)
 
         return film_id
@@ -114,32 +114,38 @@ class PostgresSaver:
     def insert_film_work(self):
         with self.conn.cursor() as cursor:
             for row in self.film_work:
-                cursor.execute('INSERT INTO content.film_work ( id, title, description, rating, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)', (row.get('id'), row.get('title'), row.get('description'), row.get('imdb_rating'), row.get('created_at').strftime('%Y-%m-%d'), row.get('created_at').strftime('%Y-%m-%d')))
+                cursor.execute(
+                    'INSERT INTO content.film_work ( id, title, description, rating, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)',
+                    (row.get('id'), row.get('title'), row.get('description'), row.get('imdb_rating'),
+                     row.get('created_at').strftime('%Y-%m-%d'), row.get('created_at').strftime('%Y-%m-%d')))
 
     def insert_genre(self):
         with self.conn.cursor() as cursor:
             for row in self.genre:
-                cursor.execute('INSERT INTO content.genre (id, name) VALUES (%s, %s)', (row.get('id'), row.get('name')))
+                cursor.execute('INSERT INTO content.genre (id, name) VALUES (%s, %s)',
+                               (row.get('id'), row.get('name')))
 
     def insert_person(self):
         with self.conn.cursor() as cursor:
             for row in self.person:
-                cursor.execute('INSERT INTO content.person (id, full_name, birth_date) VALUES (%s, %s, %s)', (row.get('id'), row.get('full_name'), row.get('birthdate')))
+                cursor.execute('INSERT INTO content.person (id, full_name, birth_date) VALUES (%s, %s, %s)',
+                               (row.get('id'), row.get('full_name'), row.get('birthdate')))
 
     def insert_film_work_genre(self):
         with self.conn.cursor() as cursor:
             for row in self.genre_film_work:
-                cursor.execute('INSERT INTO content.film_work_genre (id, film_work_id, genre_id) VALUES (%s, %s, %s)', (row.get('id'), row.get('film_work_id'), row.get('genre_id')))
+                cursor.execute('INSERT INTO content.film_work_genre (id, film_work_id, genre_id) VALUES (%s, %s, %s)',
+                               (row.get('id'), row.get('film_work_id'), row.get('genre_id')))
 
     def insert_film_work_person(self):
         with self.conn.cursor() as cursor:
             for row in self.person_film_work:
-                cursor.execute('INSERT INTO content.film_work_person (id, film_work_id, person_id, role) VALUES (%s, %s, %s, %s) ON CONFLICT (film_work_id, person_id, role) DO NOTHING', (row.get('id'), row.get('film_work_id'), row.get('person_id'), row.get('role'), ))
+                cursor.execute(
+                    'INSERT INTO content.film_work_person (id, film_work_id, person_id, role) VALUES (%s, %s, %s, %s) ON CONFLICT (film_work_id, person_id, role) DO NOTHING',
+                    (row.get('id'), row.get('film_work_id'), row.get('person_id'), row.get('role'),))
 
     def save_all_data(self, data: List[dict]):
         for row in data:
-            # берем одну строчку извлекаем нужные значения и создаем в базе фильм.
-            # для каждой таблицы по отдельности вытаскиваем данные для сохранения
             film_id = self.append_film_work(row)
 
             actor_id_list = self.append_person(row['actors'])
@@ -154,7 +160,6 @@ class PostgresSaver:
             genre_id_list = self.append_genre(row['genre'])
             self.append_genre_film_work(film_id, genre_id_list)
 
-        # кучей сохраняем все подготовленные данные
         self.insert_film_work()
         self.insert_genre()
         self.insert_person()
