@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
-from config import dsl
+from config.config import dsl
 from sqlite_to_postgres.utils.postgres_saver import PostgresSaver
 from sqlite_to_postgres.utils.sqlite_loader import SQLiteLoader
 

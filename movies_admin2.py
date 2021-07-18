@@ -4,7 +4,7 @@ import uuid
 import psycopg2
 from psycopg2.extras import execute_batch
 
-from config import dsl
+from config.config import dsl
 
 conn = psycopg2.connect(**dsl)
 
@@ -18,7 +18,7 @@ for data in cur.fetchall():
 persons_ids = [str(uuid.uuid4()) for _ in range(600_000)]
 
 print("insert persons")
-execute_batch(cur, "INSERT INTO person (id) VALUES (%s)", [(i, ) for i in persons_ids], page_size=5000)
+execute_batch(cur, "INSERT INTO person (id) VALUES (%s)", [(i,) for i in persons_ids], page_size=5000)
 conn.commit()
 print("persons has been inserted")
 film_work_person_data = []
@@ -30,7 +30,8 @@ for film_work_id in film_works_ids:
         )
 
 print("insert relations")
-execute_batch(cur, "INSERT INTO person_film_work (id, film_work_id, person_id) VALUES (%s, %s, %s)", film_work_person_data, page_size=5000)
+execute_batch(cur, "INSERT INTO person_film_work (id, film_work_id, person_id) VALUES (%s, %s, %s)",
+              film_work_person_data, page_size=5000)
 conn.commit()
 cur.close()
 conn.close()

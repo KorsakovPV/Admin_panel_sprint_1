@@ -1,3 +1,5 @@
+\c movies
+
 DROP SCHEMA IF EXISTS content CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS content;
@@ -6,7 +8,7 @@ CREATE TYPE content.film_team_role AS ENUM ('actor', 'director', 'writer');
 
 CREATE TYPE content.film_work_types AS ENUM ('movie', 'series', 'tv_show');
 
-CREATE TYPE content.film_mpaa_rating_type AS ENUM ('g', 'pg', 'pg_13', 'r', 'nc_17');
+CREATE TYPE content.film_mpaa_rating_type AS ENUM ('G', 'PG', 'PG_13', 'R', 'NC_17');
 
 CREATE TABLE IF NOT EXISTS content.film_work (
     id UUID PRIMARY KEY,

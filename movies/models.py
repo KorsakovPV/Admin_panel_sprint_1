@@ -1,18 +1,11 @@
 import uuid
 
-from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils.fields import AutoCreatedField, AutoLastModifiedField
 
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
-    login = models.CharField(_('Title'), max_length=50)
-    birth_date = models.DateTimeField()
+User = get_user_model()
 
 
 class MPAARatingType(models.TextChoices):
@@ -36,7 +29,7 @@ class FilmWorkType(models.TextChoices):
 
 
 class Person(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     full_name = models.TextField(_('Full name'))
     birth_date = models.DateField(_('Birth date'), null=True, default=None)
     created_at = AutoCreatedField(_('Date of creation'))
@@ -52,7 +45,7 @@ class Person(models.Model):
 
 
 class Genre(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.TextField(_('name'))
     description = models.TextField(_('Description'), blank=True)
     created_at = AutoCreatedField(_('Date of creation'))
@@ -68,19 +61,19 @@ class Genre(models.Model):
 
 
 class FilmWork(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     title = models.CharField(_('Title'), max_length=255)
     description = models.TextField(_('Description'), blank=True)
     creation_date = models.DateField(_('Date of creation of film'), null=True, default=None)
     certificate = models.TextField(_('Certificate'), blank=True, null=True)
     file_path = models.FileField(_('File path'), upload_to='film_work/', null=True, default=None)
     rating = models.DecimalField(_('Rating'), max_digits=2, decimal_places=1, null=True, default=None)
-    type = models.CharField(_('Type'), choices=FilmWorkType.choices, blank=True)
+    type = models.CharField(_('Type'), choices=FilmWorkType.choices, max_length=255, blank=True)
     created_at = AutoCreatedField(_('Date of creation'))
     updated_at = AutoLastModifiedField(_('Date of updated'))
     mpaa_rating = models.CharField(_('MPAA film rating system'), choices=MPAARatingType.choices, null=True,
                                    max_length=50)
-    genres = models.ManyToManyField('Genre', through='GenreFilmWork')
+    genres = models.ManyToManyField('Genre', through='FilmWorkGenre')
     persons = models.ManyToManyField('Person', through='FilmWorkPerson')
 
     class Meta:
@@ -93,7 +86,7 @@ class FilmWork(models.Model):
 
 
 class FilmWorkPerson(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     role = models.TextField(_('Role'), choices=RoleType.choices)
@@ -101,15 +94,15 @@ class FilmWorkPerson(models.Model):
 
     class Meta:
         verbose_name = _('Connection Film to Person')
-        verbose_name_plural = _('Connectionы Film to Person')
+        verbose_name_plural = _('Connections Film to Person')
         db_table = 'content.film_work_person'
         unique_together = ('film_work', 'person', 'role')
 
 
-class GenreFilmWork(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
-    film_work = models.ForeignKey('FilmWork', on_delete=models.CASCADE)
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
+class FilmWorkGenre(models.Model):
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     created_at = AutoCreatedField(_('Date of creation'))
 
     class Meta:

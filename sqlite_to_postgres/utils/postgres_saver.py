@@ -115,7 +115,8 @@ class PostgresSaver:
         with self.conn.cursor() as cursor:
             for row in self.film_work:
                 cursor.execute(
-                    'INSERT INTO content.film_work ( id, title, description, rating, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)',
+                    '''INSERT INTO content.film_work ( 
+                           id, title, description, rating, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)''',
                     (row.get('id'), row.get('title'), row.get('description'), row.get('imdb_rating'),
                      row.get('created_at').strftime('%Y-%m-%d'), row.get('created_at').strftime('%Y-%m-%d')))
 
@@ -141,7 +142,8 @@ class PostgresSaver:
         with self.conn.cursor() as cursor:
             for row in self.person_film_work:
                 cursor.execute(
-                    'INSERT INTO content.film_work_person (id, film_work_id, person_id, role) VALUES (%s, %s, %s, %s) ON CONFLICT (film_work_id, person_id, role) DO NOTHING',
+                    '''INSERT INTO content.film_work_person (id, film_work_id, person_id, role) VALUES 
+                           (%s, %s, %s, %s) ON CONFLICT (film_work_id, person_id, role) DO NOTHING''',
                     (row.get('id'), row.get('film_work_id'), row.get('person_id'), row.get('role'),))
 
     def save_all_data(self, data: List[dict]):

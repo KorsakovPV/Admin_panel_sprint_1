@@ -4,7 +4,7 @@ import uuid
 import psycopg2
 from psycopg2.extras import execute_batch
 
-from config import dsl
+from config.config import dsl
 
 conn = psycopg2.connect(**dsl)
 
