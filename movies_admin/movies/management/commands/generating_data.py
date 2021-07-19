@@ -3,11 +3,11 @@ import random
 import pyprind
 from django.core.management.base import BaseCommand
 
-from movies.factories.film_work import FilmWorkFactory
-from movies.factories.genre import GenreFactory, FilmWorkGenreFactory
-from movies.factories.person import PersonFactory, FilmWorkPersonFactory
-from movies.factories.user import UserFactory
-from movies.models import User, Genre, FilmWork, Person, FilmWorkGenre, FilmWorkPerson
+from movies_admin.movies.factories.film_work import FilmWorkFactory
+from movies_admin.movies.factories.genre import GenreFactory, FilmWorkGenreFactory
+from movies_admin.movies.factories.person import PersonFactory, FilmWorkPersonFactory
+from movies_admin.movies.factories.user import UserFactory
+from movies_admin.movies.models import User, Genre, FilmWork, Person, FilmWorkGenre, FilmWorkPerson
 
 
 class Command(BaseCommand):
