@@ -1,9 +1,5 @@
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 dsl = {
     'dbname': os.getenv('POSTGRESQL_DB', 'movies'),
     'user': os.getenv('POSTGRESQL_USER', 'postgres'),
