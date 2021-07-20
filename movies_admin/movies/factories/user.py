@@ -1,7 +1,7 @@
 from factory import Faker, PostGenerationMethodCall
 from factory.django import DjangoModelFactory
 
-from movies_admin.movies.models import User
+from movies.models import User
 
 DEFAULT_PASSWORD = 'test1'
 

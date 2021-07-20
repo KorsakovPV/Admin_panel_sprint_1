@@ -4,7 +4,7 @@ from factory import Faker, fuzzy
 from factory.django import DjangoModelFactory
 from pytz import UTC
 
-from movies_admin.movies.models import Genre, FilmWorkGenre
+from movies.models import Genre, FilmWorkGenre
 
 
 class GenreFactory(DjangoModelFactory):

@@ -1,3 +1,5 @@
+CREATE DATABASE movies;
+
 \c movies
 
 DROP SCHEMA IF EXISTS content CASCADE;
