@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from model_utils.fields import AutoCreatedField, AutoLastModifiedField
+from model_utils.models import TimeStampedModel
 
 User = get_user_model()
 
@@ -28,12 +28,10 @@ class FilmWorkType(models.TextChoices):
     TV_SHOW = 'tv_show', _('tv_show')
 
 
-class Person(models.Model):
+class Person(TimeStampedModel):
     id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     full_name = models.TextField(_('Full name'))
     birth_date = models.DateField(_('Birth date'), null=True, default=None)
-    created_at = AutoCreatedField(_('Date of creation'))
-    updated_at = AutoLastModifiedField(_('Date of updated'))
 
     class Meta:
         verbose_name = _('Person')
@@ -44,12 +42,10 @@ class Person(models.Model):
         return self.full_name
 
 
-class Genre(models.Model):
+class Genre(TimeStampedModel):
     id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.TextField(_('name'))
     description = models.TextField(_('Description'), blank=True)
-    created_at = AutoCreatedField(_('Date of creation'))
-    updated_at = AutoLastModifiedField(_('Date of updated'))
 
     class Meta:
         verbose_name = _('Genre')
@@ -60,19 +56,16 @@ class Genre(models.Model):
         return self.name
 
 
-class FilmWork(models.Model):
-    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+class FilmWork(TimeStampedModel):
+    id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(_('Title'), max_length=255)
     description = models.TextField(_('Description'), blank=True)
     creation_date = models.DateField(_('Date of creation of film'), null=True, default=None)
     certificate = models.TextField(_('Certificate'), blank=True, null=True)
     file_path = models.FileField(_('File path'), upload_to='film_work/', null=True, default=None)
-    rating = models.DecimalField(_('Rating'), max_digits=2, decimal_places=1, null=True, default=None)
-    type = models.CharField(_('Type'), choices=FilmWorkType.choices, max_length=255, blank=True)
-    created_at = AutoCreatedField(_('Date of creation'))
-    updated_at = AutoLastModifiedField(_('Date of updated'))
-    mpaa_rating = models.CharField(_('MPAA film rating system'), choices=MPAARatingType.choices, null=True,
-                                   max_length=50)
+    rating = models.FloatField(_('Rating'), null=True, default=None)
+    type = models.CharField(_('Type'), choices=FilmWorkType.choices, max_length=50, blank=True)
+    mpaa_rating = models.CharField(_('MPAA film rating'), choices=MPAARatingType.choices, blank=True, max_length=50)
     genres = models.ManyToManyField('Genre', through='FilmWorkGenre')
     persons = models.ManyToManyField('Person', through='FilmWorkPerson')
 
@@ -85,12 +78,11 @@ class FilmWork(models.Model):
         return self.title
 
 
-class FilmWorkPerson(models.Model):
+class FilmWorkPerson(TimeStampedModel):
     id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    role = models.TextField(_('Role'), choices=RoleType.choices)
-    created_at = AutoCreatedField(_('Date of creation'))
+    role = models.CharField(_('Role'), choices=RoleType.choices, max_length=50)
 
     class Meta:
         verbose_name = _('Connection Film to Person')
@@ -99,11 +91,10 @@ class FilmWorkPerson(models.Model):
         unique_together = ('film_work', 'person', 'role')
 
 
-class FilmWorkGenre(models.Model):
+class FilmWorkGenre(TimeStampedModel):
     id = models.UUIDField('id', primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    created_at = AutoCreatedField(_('Date of creation'))
 
     class Meta:
         verbose_name = _('Genre')

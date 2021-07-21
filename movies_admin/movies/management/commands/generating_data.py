@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     USER = 100
     GENRE = 10000
-    PERSON = 1000
+    PERSON = 100000
     FILMWORK_FILM = 1000000
     FILMWORK_SERIES = 200000
     FILMWORK_MIN_GENRE = 0
@@ -30,10 +30,10 @@ class Command(BaseCommand):
         python manage.py generating_data
         """
 
-        # User.objects.exclude(is_superuser=True).delete()
-        # Genre.objects.all().delete()
-        # Person.objects.all().delete()
-        # FilmWork.objects.all().delete()
+        User.objects.exclude(is_superuser=True).delete()
+        Genre.objects.all().delete()
+        Person.objects.all().delete()
+        FilmWork.objects.all().delete()
 
         self.generating_users()
         logging.info('User=', User.objects.all().count())
