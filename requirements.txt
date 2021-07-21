@@ -11,3 +11,5 @@ python-dotenv~=0.18.0
 factory-boy==3.2.0
 PyPrind==2.11.3
 flake8==3.9.2
+pytz~=2021.1
+PyYAML~=5.4.1

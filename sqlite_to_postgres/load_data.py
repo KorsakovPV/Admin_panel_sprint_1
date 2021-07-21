@@ -1,12 +1,21 @@
+import os
 import sqlite3
 
 import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extras import DictCursor
 
-from .config import dsl
-from sqlite_to_postgres.utils.postgres_saver import PostgresSaver
-from sqlite_to_postgres.utils.sqlite_loader import SQLiteLoader
+from utils.postgres_saver import PostgresSaver
+from utils.sqlite_loader import SQLiteLoader
+
+dsl = {
+    'dbname': os.getenv('POSTGRESQL_DB', 'movies'),
+    'user': os.getenv('POSTGRESQL_USER', 'postgres'),
+    'password': os.getenv('POSTGRESQL_PASSWORD', 'postgres'),
+    'host': os.getenv('POSTGRESQL_HOST', 'localhost'),
+    'port': os.getenv('POSTGRESQL_PORT', '5432'),
+    'options': os.getenv('POSTGRESQL_OPTIONS', '-c search_path=content'),
+}
 
 
 def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):

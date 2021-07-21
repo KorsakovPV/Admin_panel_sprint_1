@@ -4,7 +4,7 @@ from typing import List
 
 
 class SQLiteLoader:
-    SQL = """
+    SQL = '''
     WITH movies_actors as (
         SELECT movies.id, group_concat(actors.id) as actors_ids, group_concat(actors.name) as actors_names
         FROM movies
@@ -19,18 +19,11 @@ class SQLiteLoader:
            END AS writers
     FROM movies
     LEFT JOIN movies_actors ON movies.id = movies_actors.id
-    """
+    '''
 
     def __init__(self, connection: sqlite3.Connection):
         self.conn = connection
-        self.conn.row_factory = self.dict_factory
-
-    @staticmethod
-    def dict_factory(cursor: sqlite3.Cursor, row: tuple) -> dict:
-        d = {}
-        for idx, col in enumerate(cursor.description):
-            d[col[0]] = row[idx]
-        return d
+        self.conn.row_factory = sqlite3.Row
 
     def load_writers_names(self) -> dict:
         writers = {}
@@ -53,7 +46,7 @@ class SQLiteLoader:
 
         new_row = {
             'id': row['id'],
-            'genre': row['genre'].replace(' ', '').split(','),
+            'genre': row['genre'].split(','),
             'actors': actors_names,
             'writers': [x['name'] for x in movie_writers],
             'imdb_rating': float(row['imdb_rating']) if row['imdb_rating'] != 'N/A' else None,
