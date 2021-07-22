@@ -169,8 +169,8 @@ class PostgresSaver:
             genre_id_list = self.append_genre(row['genre'])
             self.append_genre_film_work(film_id, genre_id_list)
 
-        # self.insert_film_work()
-        # self.insert_genre()
-        # self.insert_person()
-        # self.insert_film_work_person()
-        # self.insert_film_work_genre()
+        self.insert_film_work()
+        self.insert_genre()
+        self.insert_person()
+        self.insert_film_work_person()
+        self.insert_film_work_genre()
