@@ -46,7 +46,7 @@ class SQLiteLoader:
 
         new_row = {
             'id': row['id'],
-            'genre': row['genre'].split(','),
+            'genre': row['genre'].split(', '),
             'actors': actors_names,
             'writers': [x['name'] for x in movie_writers],
             'imdb_rating': float(row['imdb_rating']) if row['imdb_rating'] != 'N/A' else None,
