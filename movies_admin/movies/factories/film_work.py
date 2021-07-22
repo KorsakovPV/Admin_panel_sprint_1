@@ -8,6 +8,7 @@ from movies.models import FilmWork, MPAARatingType, FilmWorkType
 
 
 class FilmWorkFactory(DjangoModelFactory):
+    id = Faker('uuid4')
     title = Faker('company')
     description = Faker('sentence', nb_words=128, variable_nb_words=True)
     creation_date = fuzzy.FuzzyDateTime(start_dt=datetime.datetime(2000, 1, 1, tzinfo=UTC))
